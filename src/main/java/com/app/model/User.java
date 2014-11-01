@@ -1,10 +1,13 @@
 package com.app.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,25 +21,24 @@ import javax.persistence.Table;
 @Table(name = "user")
 public class User {
 
-	private Role role;
+	private Set<Role> role = new HashSet<Role>(0);;
 	private List<Chat> chats = new ArrayList<Chat>();
-	
-	@ManyToOne
-	public Role getRole() {
-		return role;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	public Set<Role> getUserRole() {
+		return this.role;
 	}
-	public void setRole(Role role) {
-		this.role = role;
+ 
+	public void setUserRole(Set<Role> userRole) {
+		this.role = userRole;
 	}
-	
+
 	@ManyToMany
-	@JoinTable(name = "user_chat",
-	joinColumns = @JoinColumn(name = "uc_id" ),
-	inverseJoinColumns = @JoinColumn(name = "chat_id" ))
+	@JoinTable(name = "user_chat", joinColumns = @JoinColumn(name = "uc_id"), inverseJoinColumns = @JoinColumn(name = "chat_id"))
 	public List<Chat> getChats() {
 		return chats;
 	}
-	
+
 	public void setChats(List<Chat> chats) {
 		this.chats = chats;
 	}
@@ -49,6 +51,7 @@ public class User {
 	private String password;
 	private String hobbie;
 	private String note;
+	private boolean enabled;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -121,5 +124,14 @@ public class User {
 
 	public void setNote(String note) {
 		this.note = note;
+	}
+
+	@Column(name = "enabled", nullable = false)
+	public boolean isEnabled() {
+		return this.enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 }
